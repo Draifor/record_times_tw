@@ -1,72 +1,7 @@
-from playwright.sync_api import Playwright, sync_playwright, expect
-import re
+from windows.mainApp import App
 
-def run(playwright: Playwright) -> None:
-    browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
-    page = context.new_page()
-    page.goto("https://grupocadena.teamwork.com/app/tasks/37701758")
-    page.get_by_label("Email address").fill("luis.parra@axces.com.co")
-    page.get_by_label("Password").fill("AxcesAgosto22*")
-    page.get_by_role("button", name="Log in").click()
-    page.frame_locator("iframe").get_by_label("Log time").click()
-    page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/12/2023")
-    page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Tab")
-    page.frame_locator("iframe").get_by_role("textbox").nth(1).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^12$")).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^0$")).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^PM$")).click()
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("Delete")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).fill("12:00pm")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("Tab")
-    # page.frame_locator("iframe").get_by_text("PM", exact=True)
-    # page.frame_locator("iframe").get_by_text("12", exact=True)[0].click()
-    # page.frame_locator("iframe").get_by_text("0", exact=True)[0].click()
+# Create the application
+app = App()
 
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).click()
-    # # page.frame_locator("iframe").get_by_role("textbox").nth(2).press("Delete")
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^1$")).click()
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^0$")).click()
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^PM$")).click()
-    
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).fill("01:00pm")
-    # page.frame_locator("iframe").get_by_text("PM", exact=True)[1].click()
-    # page.frame_locator("iframe").get_by_text("1", exact=True)[1].click()
-    # page.frame_locator("iframe").get_by_text("0", exact=True)[1].click()
-
-    page.frame_locator("iframe").get_by_role("textbox").nth(3).click()
-    page.frame_locator("iframe").get_by_role("textbox").nth(3).fill("1")
-    
-    page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").fill("Launch Time")
-    page.frame_locator("iframe").get_by_role("button", name="Registar esta Hora").click()
-    # page.get_by_role("button", name="Avatar de Luis Alfredo Parra").click()
-    # page.get_by_role("link", name="Avatar de Luis Alfredo Parra").click()
-    # page.get_by_role("listbox").get_by_role("link", name="Tiempo").click()
-    # page.frame_locator("iframe").locator("g:nth-child(3) > rect:nth-child(6)").click()
-    # page.frame_locator("iframe").locator("#mainContent div").filter(has_text="Cargando 4 Start timer Log").first.click()
-    # page.frame_locator("iframe").get_by_role("link", name="Hacer seguimiento del proceso").click()
-    # page.frame_locator("iframe").get_by_label("Log time set").click()
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").click()
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/1211/12/2023")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Home")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Shift+End")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/12/2023")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).click()
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("ArrowRight")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).click()
-    # page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").click()
-    # page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").fill("Some New Taks")
-    # page.frame_locator("iframe").get_by_role("button", name="Registar esta Hora").click()
-
-    # ---------------------
-    context.close()
-    browser.close()
-
-
-with sync_playwright() as playwright:
-    run(playwright)
+# Run the application
+app.mainloop()
