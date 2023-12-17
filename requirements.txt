@@ -3,3 +3,4 @@ playwright
 pytest-playwright
 pyinstaller
 cryptography
+pandas

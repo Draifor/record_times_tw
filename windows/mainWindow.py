@@ -62,7 +62,7 @@ class MainWindow(tk.Frame):
         self.controller.show_frame("ProcessWindow")
 
         # Start the process
-        # startProcess(username, password)
+        startProcess(username, password)
 
 
     # Save credentials on a file
