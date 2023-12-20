@@ -22,8 +22,8 @@ def obtain_tasks_info():
     for index, row in df.iterrows():
         description = row[DESCRIPTION]
         date = row[DATE]
-        start_time = row[START_TIME].strftime("%I:%M:%p")
-        end_time = row[END_TIME].strftime("%I:%M:%p")
+        start_time = row[START_TIME].strftime("%I:%M %p")
+        end_time = row[END_TIME].strftime("%I:%M %p")
         dedicated_time = row[DEDICATED_TIME].strftime("%H:%M")
         task_tw = row[TASK_TW]
         tasks_info.append(
