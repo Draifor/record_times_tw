@@ -1,5 +1,6 @@
 import os.path
 import tkinter as tk
+import tkinter.messagebox as msg
 import utils.encryptation as encrypt
 from playwright_process.main import startProcess
 
@@ -15,7 +16,7 @@ class MainWindow(tk.Frame):
         self.label.pack(side="top", fill="x", pady=10)
 
         # Create a username label
-        self.username_label = tk.Label(self, text="Nombre de Usuario")
+        self.username_label = tk.Label(self, text="Correo electrónico")
         self.username_label.pack(side="top", fill="x", pady=5)
 
         # Create a username entry
@@ -62,7 +63,16 @@ class MainWindow(tk.Frame):
         self.controller.show_frame("ProcessWindow")
 
         # Start the process
-        startProcess(username, password)
+        msg.showinfo("Iniciando Proceso", "El proceso de registro de tiempos está iniciando.\nPor favor, espere...")
+        try:
+            startProcess(username, password)
+            msg.showinfo("Proceso terminado", "Los tiempos se han registrado correctamente.")
+        except Exception as e:
+            message = f"El proceso ha fallado por el siguiente motivo:\n{e}"
+            print(message)
+            msg.showerror("Error en el proceso", message)
+
+        self.controller.show_frame("MainWindow")
 
 
     # Save credentials on a file

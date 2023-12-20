@@ -4,19 +4,46 @@ import tkinter.messagebox as msg
 # Read a Excel file and show in a console the content
 
 import pandas as pd
+from utils.constants import (
+    EXCEL_FILE,
+    TASKS_SHEET,
+    DESCRIPTION,
+    DATE,
+    START_TIME,
+    END_TIME,
+    DEDICATED_TIME,
+    TASK_TW,
+)
 
-df = pd.read_excel('Registro_Tiempos_TW.xlsx', sheet_name='Hoja1')
 
-for index, row in df.iterrows():
-    description = row['Descripción Tarea']
-    date = row['Fecha']
-    start_time = row['Hora Inicio'].strftime("%I:%M%p")
-    end_time = row['Hora Fin'].strftime("%I:%M%p")
-    all_time = row['Tiempo Dedicado']
-    task_tw = row['Tarea TW']
-    print(description, date, start_time, end_time, all_time, task_tw)
+def obtain_tasks_info():
+    df = pd.read_excel(EXCEL_FILE, sheet_name=TASKS_SHEET)
 
+    # Format the date column
+    df[DATE] = pd.to_datetime(df[DATE], format="%Y%m%d").dt.strftime("%d/%m/%Y")
 
+    tasks_info = []
+
+    for index, row in df.iterrows():
+        description = row[DESCRIPTION]
+        date = row[DATE]
+        start_time = row[START_TIME].strftime("%I:%M:%p")
+        end_time = row[END_TIME].strftime("%I:%M:%p")
+        dedicated_time = row[DEDICATED_TIME].strftime("%H:%M")
+        task_tw = row[TASK_TW]
+        tasks_info.append(
+            {
+                'description': description,
+                'date': date,
+                'start_time': start_time,
+                'end_time': end_time,
+                'dedicated_time': dedicated_time,
+                'task_tw': task_tw,
+            }
+        )
+        print(description, date, start_time, end_time, dedicated_time, task_tw)
+
+    return tasks_info
 
 def proceso_largo():
     # Aquí va el código del proceso que tarda mucho
@@ -49,5 +76,16 @@ boton = tk.Button(ventana, text="Iniciar proceso", command=iniciar_proceso)
 boton.pack(padx=10, pady=10)
 
 # Iniciamos el bucle principal de la ventana
-ventana.mainloop()
+# ventana.mainloop()
 
+test = 'This is a test'
+print(f"Test: {test}")
+
+tasks = obtain_tasks_info()
+print(tasks)
+hour_parts = tasks[0]['start_time'].split(":")
+# hour_parts = [part[1:] if part.startswith('0') else part for part in hour_parts]
+# print(hour_parts)
+
+hour, minute, indicator = [part[1:] if part.startswith('0') else part for part in hour_parts]
+print(hour, minute, indicator)

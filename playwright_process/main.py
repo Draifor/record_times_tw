@@ -1,74 +1,154 @@
 from playwright.sync_api import Playwright, sync_playwright
+from utils.obtainTasksInfo import obtain_tasks_info
+from utils.constants import TW_URL
+import tkinter.messagebox as msg
 import re
 
-def mainProcess(playwright: Playwright, username: str, password: str) -> None:
+
+def mainProcess(
+    playwright: Playwright, username: str, password: str, tasks_info: dict
+) -> None:
     browser = playwright.chromium.launch(headless=False)
     context = browser.new_context()
     page = context.new_page()
-    page.goto("https://grupocadena.teamwork.com/app/tasks/37701758")
+    page.goto(TW_URL)
+    context.tracing.start(screenshots=True, snapshots=True, sources=True)
+    page.get_by_label("Email address").click()
     page.get_by_label("Email address").fill(username)
+    page.get_by_label("Password").click()
     page.get_by_label("Password").fill(password)
-    # page.get_by_label("Email address").fill("luis.parra@axces.com.co")
-    # page.get_by_label("Password").fill("AxcesAgosto22*")
     page.get_by_role("button", name="Log in").click()
-    page.frame_locator("iframe").get_by_label("Log time").click()
-    page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/12/2023")
-    page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Tab")
-    page.frame_locator("iframe").get_by_role("textbox").nth(1).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^12$")).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^0$")).click()
-    page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^PM$")).click()
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("Delete")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).fill("12:00pm")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("Tab")
-    # page.frame_locator("iframe").get_by_text("PM", exact=True)
-    # page.frame_locator("iframe").get_by_text("12", exact=True)[0].click()
-    # page.frame_locator("iframe").get_by_text("0", exact=True)[0].click()
+    page.frame_locator("iframe").get_by_role(
+        "heading", name="Tareas", exact=True
+    ).click()
 
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).click()
-    # # page.frame_locator("iframe").get_by_role("textbox").nth(2).press("Delete")
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^1$")).click()
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^0$")).click()
-    # page.frame_locator("iframe").locator("a").filter(has_text=re.compile(r"^PM$")).click()
-    
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).fill("01:00pm")
-    # page.frame_locator("iframe").get_by_text("PM", exact=True)[1].click()
-    # page.frame_locator("iframe").get_by_text("1", exact=True)[1].click()
-    # page.frame_locator("iframe").get_by_text("0", exact=True)[1].click()
+    for task in tasks_info:
+        page.goto(task["task_tw"])
 
-    page.frame_locator("iframe").get_by_role("textbox").nth(3).click()
-    page.frame_locator("iframe").get_by_role("textbox").nth(3).fill("1")
-    
-    page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").fill("Launch Time")
-    page.frame_locator("iframe").get_by_role("button", name="Registar esta Hora").click()
-    # page.get_by_role("button", name="Avatar de Luis Alfredo Parra").click()
-    # page.get_by_role("link", name="Avatar de Luis Alfredo Parra").click()
-    # page.get_by_role("listbox").get_by_role("link", name="Tiempo").click()
-    # page.frame_locator("iframe").locator("g:nth-child(3) > rect:nth-child(6)").click()
-    # page.frame_locator("iframe").locator("#mainContent div").filter(has_text="Cargando 4 Start timer Log").first.click()
-    # page.frame_locator("iframe").get_by_role("link", name="Hacer seguimiento del proceso").click()
-    # page.frame_locator("iframe").get_by_label("Log time set").click()
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").click()
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("ArrowLeft")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/1211/12/2023")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Home")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Shift+End")
-    # page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill("09/12/2023")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).click()
-    # page.frame_locator("iframe").get_by_role("textbox").nth(1).press("ArrowRight")
-    # page.frame_locator("iframe").get_by_role("textbox").nth(2).click()
-    # page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").click()
-    # page.frame_locator("iframe").locator("#addOrEditTimeEntryDescriptionInput").fill("Some New Taks")
-    # page.frame_locator("iframe").get_by_role("button", name="Registar esta Hora").click()
+        try:
+            # page.frame_locator("iframe").get_by_label("Log time").click()
+            page.frame_locator("iframe").get_by_role(
+                "button", name=" Log time"
+            ).click()
+        except Exception as e:
+            error_message = f"Error: {e}"
+            print(error_message)
+            msg.showerror(
+                "Ocurrió un error",
+                f"Por favor verifica que la tarea\n{task['task_tw']}\nexista y que tengas los permisos necesarios\n{error_message}",
+            )
+
+        page.frame_locator("iframe").get_by_placeholder("Sin fecha").fill(task["date"])
+        page.frame_locator("iframe").get_by_placeholder("Sin fecha").press("Tab")
+        page.frame_locator("iframe").get_by_role("textbox").nth(1).click()
+        hour_parts = task["start_time"].split(":")
+        hour, minute, indicator = [
+            part[1:] if part.startswith("0") else part for part in hour_parts
+        ]
+        print(hour, minute, indicator)
+
+        print("Aqui estoy")
+        # Asign the action to the hour
+        if (
+            hour == "12"
+            or hour == "1"
+            or hour == "2"
+            or hour == "3"
+            or hour == "4"
+            or hour == "6"
+            or hour == "7"
+            or hour == "8"
+            or hour == "9"
+        ):
+            page.frame_locator("iframe").get_by_text(hour, exact=True).click()
+        elif hour == "5":
+            print("Aqui estoy5")
+            # page.frame_locator("iframe").get_by_text(hour, exact=True).first().click()
+            page.frame_locator("iframe").locator("a").filter(
+                has_text=re.compile(rf"^{hour}$")
+            ).nth(1).click()
+        elif hour == "10":
+            page.frame_locator("iframe").get_by_text(hour).first().click()
+        elif hour == "11":
+            page.frame_locator("iframe").get_by_text(hour).click()
+        else:
+            msg.showerror(
+                "Ocurrió un error",
+                f"Por favor verifica que la hora\n{task['start_time']}\nsea válida",
+            )
+
+        # try:
+        #     page.frame_locator("iframe").locator("a").filter(
+        #         has_text=re.compile(rf"^{hour}$")
+        #     ).click()
+        # except Exception as e:
+        #     error_message = f"Error: {e}"
+        #     print(error_message)
+        #     if "strict mode violation" in error_message:
+        #         page.frame_locator("iframe").locator("a").filter(
+        #             has_text=re.compile(rf"^{hour}$")
+        #         ).nth(1).click()
+
+        print("Aqui estoy0")
+        # Assign the action to the minute
+        if minute == "0" or minute == "15" or minute == "20" or minute == "50":
+            page.frame_locator("iframe").get_by_text(minute, exact=True).click()
+        elif minute == "5":
+            page.frame_locator("iframe").get_by_text(minute, exact=True).nth(1).click()
+        elif minute == "10":
+            page.frame_locator("iframe").get_by_text(minute).nth(1).click()
+        elif (
+            minute == "25"
+            or minute == "30"
+            or minute == "35"
+            or minute == "40"
+            or minute == "45"
+            or minute == "55"
+        ):
+            page.frame_locator("iframe").get_by_text(minute).click()
+
+        # try:
+        #     page.frame_locator("iframe").locator("a").filter(
+        #         has_text=re.compile(rf"^{minute}$")
+        #     ).click()
+        # except Exception as e:
+        #     error_message = f"Error: {e}"
+        #     print(error_message)
+        #     if "strict mode violation" in error_message:
+        #         page.frame_locator("iframe").locator("a").filter(
+        #             has_text=re.compile(rf"^{minute}$")
+        #         ).nth(2).click()
+        print("Aqui estoy1")
+
+        # Assign the action to the indicator
+        page.frame_locator("iframe").get_by_text(indicator, exact=True).click()
+        # page.frame_locator("iframe").locator("a").filter(
+        #     has_text=re.compile(rf"^{indicator}$")
+        # ).click()
+
+        print("Aqui estoy2")
+
+        page.frame_locator("iframe").get_by_role("textbox").nth(3).click()
+        print("Aqui estoy3")
+        page.frame_locator("iframe").get_by_role("textbox").nth(3).fill(
+            task["dedicated_time"]
+        )
+
+        print("Aqui estoy4")
+        page.frame_locator("iframe").locator(
+            "#addOrEditTimeEntryDescriptionInput"
+        ).fill(task["description"])
+        page.frame_locator("iframe").get_by_role(
+            "button", name="Registar esta Hora"
+        ).click()
 
     # ---------------------
+    context.tracing.stop(path="trace.zip")
     context.close()
     browser.close()
 
+
 def startProcess(username: str, password: str):
     with sync_playwright() as playwright:
-        mainProcess(playwright, username, password)
+        tasks_info = obtain_tasks_info()
+        mainProcess(playwright, username, password, tasks_info)
