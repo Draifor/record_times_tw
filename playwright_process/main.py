@@ -40,7 +40,7 @@ def mainProcess(
         #  Fill date
         page.get_by_label("Fecha").click()
         page.get_by_label("Fecha").fill(task["date"])
-        page.get_by_label("Ir al mes anterior").press("Escape")
+        page.get_by_label("Fecha").press("Enter")
 
         # Fill start time
         page.get_by_label("Hora de inicio").click()
@@ -51,6 +51,9 @@ def mainProcess(
         page.get_by_label("Hora de finalización").click()
         page.get_by_label("Hora de finalización").fill(task["end_time"])
         page.get_by_label("Hora de finalización").press("Tab")
+
+        # Uncheck billable
+        page.get_by_label("Marcar como facturable").uncheck()
 
         # Fill description
         page.get_by_label("Descripción").click()
